@@ -23,7 +23,7 @@ printDiamond = function(h, c) {
   return f1(h, 1, c) + f2(h, h-2, c);
 };
 
-printDiamond(2, "@");
+printDiamond(5, "@");
 
 
 printDiamond = function(h, c) {
