@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body>
+		<canvas id = "canvas" width ="900" height = "900">
+		</canvas>
+		<script>
+			const canvas = document.getElementById("canvas");
+			const context = canvas.getContext("2d");
+			
+			const backImage = new Image();
+			backImage.src = "http://www.hdwallpaperup.com/wp-content/uploads/2015/02/Simple-Green-Background.jpg";
+			
+			const boardImage = new Image();
+			boardImage.src = "https://opengameart.org/sites/default/files/board_0.png";
+			
+			const xImage = new Image();
+			xImage.src = "http://worldartsme.com/images/blue-xmark-clipart-1.jpg" ;			
+			
+			const oImage = new Image();
+			oImage.src = "http://jimdscott.com/static/images/tic-tac-toe-O.png";
+			
+			let gameInProgress = true;  
+			const rand = function(num) {
+				return Math.floor(Math.random() * num);
+			};
+			let isO = (rand(2) === 1) ? true : false;
+			
+			canvas.addEventListener('click', function(evt) {
+					if(isO && gameInProgress){	
+						let x1 = Math.floor(evt.offsetX/(canvas.width/3));
+						let y1 = Math.floor(evt.offsetY/(canvas.height/3));
+						if(board[x1][y1] === ' '){
+							board[x1][y1] = 'o';
+							draw();
+							if(!isGameEnd())							
+								isO = !isO;
+							else 
+								isO = false;
+						}
+					}	
+				}, false); 
+					
+			const draw = function(){
+				context.drawImage(backImage, 0, 0, canvas.width, canvas.height);
+				context.drawImage(boardImage, 0, 0, canvas.width, canvas.height);
+				
+				for(let i = 0; i <= 2; i++)
+					for(let j = 0; j <= 2; j++ ){
+						debugger;
+						if(board[i][j] === 'x')
+							context.drawImage(xImage, i*(canvas.width/3), j*(canvas.height/3), canvas.width/3, canvas.height/3);
+						else if(board[i][j] === 'o')
+								context.drawImage(oImage, i*(canvas.width/3), j*(canvas.height/3), canvas.width/3, canvas.height/3);
+					}
+			};
+			const board = [
+					[' ', ' ', ' '],
+					[' ', ' ', ' '],
+					[' ', ' ', ' ']
+				];
+			
+			const ticTacToe = function(){
+				draw();
+				if(!isO && gameInProgress){
+					const pos = nextMove(true);
+					makeMove( true, pos);	
+					draw();
+					if(!isGameEnd())
+						isO = !isO;
+					else 
+						isO = false;
+				}
+				requestAnimationFrame(ticTacToe);
+			};
+			const isGameEnd = function() {
+				const fw = 	findWinner();
+					if(typeof fw !==  'undefined'){
+					gameInProgress = false;
+						if(fw.winner === 'none'){
+							setTimeout(function(){
+								alert("DRAW");
+								clearBoard();
+								gameInProgress = true;
+							}, 10);
+							
+						}else{
+							setTimeout(function(){
+								alert("The winner is " + fw.winner);
+								clearBoard();
+								gameInProgress = true;
+							}, 10);
+							
+						}	
+						//clearBoard();
+						return true;
+					}
+					return false;
+			};
+			const clearBoard = function(){
+				for(let i = 0; i <= 2; i++)
+					for(let j = 0; j <= 2; j++ )
+						board[i][j] = ' ';
+			};
+					
+			const nextMove = function(isX){
+				let pos = [rand(3), rand(3)];
+				while(true){
+					if(board[pos[0]][pos[1]] === ' ')
+						break;
+					pos = [rand(3), rand(3)];	
+				}			
+				return	pos;
+			};
+			const makeMove = function(isX, pos){
+				if(pos[0] < 0 && pos[0]>2 && pos[1] < 0 && pos[1]>2)
+					return -1;
+				if(isX)
+					board[pos[0]][pos[1]] = 'x';
+				else
+					board[pos[0]][pos[1]] = 'o';
+				return 0;
+			};
+			const isBoardFull = function(){
+				for(let i = 0; i <= 2; i++)
+					for(let j = 0; j <= 2; j++ )
+						if(board[i][j] === ' ')
+							return false;
+				return true;
+			};
+			const findWinner = function(){
+				if(board[0][0] === board[1][1] && board[1][1] === board[2][2] && board[0][0]!== ' ')
+					return  {
+								winner: board[0][0],
+								winningLocations: [[0, 0], [1, 1], [2, 2]] 
+							} 
+				if(board[0][2] === board[1][1] && board[1][1] === board[2][0] && board[0][2]!== ' ')
+					return  {
+								winner: board[0][2],
+								winningLocations: [[0, 2], [1, 1], [2, 0]] 
+							}
+				for(let i = 0; i <= 2; i++){
+					if(board[i][0] === board[i][1] && board[i][1] === board[i][2] && board[i][0]!== ' ')
+					return  {
+								winner: board[i][0],
+								winningLocations: [[i, 0], [i, 1], [i, 2]] 
+							}
+				}
+				for(let i = 0; i <= 2; i++){
+					if(board[0][i] === board[1][i] && board[1][i] === board[2][i] && board[0][i]!== ' ')
+					return  {
+								winner: board[0][i],
+								winningLocations: [[0, i], [1, i], [2, i]] 
+							}
+				}
+				if(isBoardFull())
+					return {
+								winner: 'none' 
+					}
+				return;
+			};
+
+			ticTacToe();
+		</script>
+	</body>
+</html>
