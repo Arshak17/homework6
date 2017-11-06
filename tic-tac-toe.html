@@ -37,10 +37,10 @@
 							draw();
 							if(!isGameEnd())							
 								isO = !isO;
-							else 
-								isO = false;
 						}
-					}	
+					}	else {
+          	isO = !isO;
+          }
 				}, false); 
 					
 			const draw = function(){
@@ -90,7 +90,7 @@
 							
 						}else{
 							setTimeout(function(){
-								alert("The winner is " + fw.winner);
+								alert("The winner is " + fw.winner + " " + fw.winningLocations);
 								clearBoard();
 								gameInProgress = true;
 							}, 10);
@@ -165,7 +165,6 @@
 					}
 				return;
 			};
-
 			ticTacToe();
 		</script>
 	</body>
